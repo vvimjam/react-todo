@@ -5,26 +5,32 @@ import TodoList from "./TodoList";
 import { Layout, Menu, Divider } from "antd";
 import { DesktopOutlined, PieChartOutlined } from "@ant-design/icons";
 import { Row, Col } from "antd";
+import ReorderCompletedTodos from "UseCases/ReorderCompletedTodos";
 
 const { Content, Sider } = Layout;
 
 type state = { todos: Todo[]; collapsed: boolean };
 
 export default class App extends React.Component<{}, state> {
+  defaultTodos = [
+    new Todo(1, "Delete todos.", true),
+    new Todo(2, "Group actions [delete all, mark/unmark all]."),
+    new Todo(3, "Add todo 'Enter' key action.", true),
+    new Todo(4, "App logo/banner."),
+    new Todo(5, "Support for due date."),
+    new Todo(6, "Todo list filter by completed, incomplete"),
+    new Todo(7, "Redux store."),
+    new Todo(8, "Responsive design."),
+  ];
+
   constructor(props: any) {
     super(props);
 
+    //Reorder on first launch
+    this.defaultTodos = ReorderCompletedTodos.Execute(this.defaultTodos);
+
     this.state = {
-      todos: [
-        new Todo(1, "Delete todos."),
-        new Todo(2, "Group actions [delete all, mark/unmark all]."),
-        new Todo(3, "Add todo 'Enter' key action."),
-        new Todo(4, "App logo/banner."),
-        new Todo(5, "Support for due date."),
-        new Todo(6, "Todo list filter by completed, incomplete"),
-        new Todo(7, "Redux store."),
-        new Todo(8, "Responsive design."),
-      ],
+      todos: this.defaultTodos,
       collapsed: false,
     };
   }
@@ -44,29 +50,41 @@ export default class App extends React.Component<{}, state> {
 
   markUmMarkTodo = (id: number) => {
     var todos = [...this.state.todos];
-    const targetTodoIndex = todos.findIndex((y) => y.Id == id);
 
-    if (targetTodoIndex != -1) {
-      //Push completed to the end
-      const targetTodo = todos[targetTodoIndex];
+    // const targetTodoIndex = todos.findIndex((y) => y.Id == id);
 
-      //Seperate out completed/incomplete tasks
-      const completedTodos = todos.filter((y) => y.Id != id && y.IsCompleted);
-      const unCompletedTodos = todos.filter(
-        (y) => y.Id != id && !y.IsCompleted
-      );
+    // if (targetTodoIndex != -1) {
+    //   //Push completed to the end
+    //   const targetTodo = todos[targetTodoIndex];
 
-      //Toggle completion
-      targetTodo.IsCompleted = !targetTodo.IsCompleted;
+    //   //Seperate out completed/incomplete tasks
+    //   const completedTodos = todos.filter((y) => y.Id != id && y.IsCompleted);
+    //   const unCompletedTodos = todos.filter(
+    //     (y) => y.Id != id && !y.IsCompleted
+    //   );
 
-      //If completed add to top of completed stack. else add to top
-      if (targetTodo.IsCompleted)
-        todos = [...unCompletedTodos, targetTodo, ...completedTodos];
-      else todos = [targetTodo, ...unCompletedTodos, ...completedTodos];
+    //   //Toggle completion
+    //   targetTodo.IsCompleted = !targetTodo.IsCompleted;
 
-      //Update state
-      this.setState({ todos: todos });
-    }
+    //   //If completed add to top of completed stack. else add to top
+    //   if (targetTodo.IsCompleted)
+    //     todos = [...unCompletedTodos, targetTodo, ...completedTodos];
+    //   else todos = [targetTodo, ...unCompletedTodos, ...completedTodos];
+
+    //   //Update state
+    //   this.setState({ todos: todos });
+    // }
+
+    todos = ReorderCompletedTodos.Execute(todos, id);
+
+    this.setState({ todos: todos });
+  };
+
+  deleteTodo = (id: number) => {
+    console.log(id);
+    var todoClones = [...this.state.todos];
+    todoClones = todoClones.filter((y) => y.Id != id);
+    this.setState({ todos: todoClones });
   };
 
   onCollapse = (collapsed: any) => {
@@ -107,6 +125,7 @@ export default class App extends React.Component<{}, state> {
               <Row>
                 <Col span={24}>
                   <TodoList
+                    deleteTodo={this.deleteTodo}
                     list={this.state.todos}
                     markTodo={this.markUmMarkTodo}
                   />

@@ -20,8 +20,15 @@ export default class NewTodo extends React.Component<props, state> {
     this.setState({ todoText: event.target.value });
   };
 
+  onKeyUp = (event: any) => {
+    if (event.key == "Enter") this.onAddClick(event);
+  };
+
   onAddClick = (e: any) => {
     this.props.addTodo(this.state.todoText);
+    this.setState({
+      todoText: "",
+    });
   };
 
   render() {
@@ -36,6 +43,7 @@ export default class NewTodo extends React.Component<props, state> {
           <Input
             value={this.state.todoText}
             onChange={this.onKeyPress}
+            onKeyUp={this.onKeyUp}
             placeholder={"Enter new todo..."}
           />
         </Col>
