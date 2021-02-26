@@ -1,12 +1,15 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import App from "./Components/App";
+import { AppFunction } from "./Components/App";
 import "antd/dist/antd.css";
 import "Stylesheets/Base.scss";
+import { rootStore, RootStoreProvider } from "Store/RootStore";
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <RootStoreProvider value={rootStore}>
+      <AppFunction />
+    </RootStoreProvider>
   </React.StrictMode>,
   document.getElementById("root")
 );

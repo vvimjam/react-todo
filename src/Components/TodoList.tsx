@@ -3,8 +3,11 @@ import React from "react";
 import { List, Checkbox, Card, Button } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { observer, inject, useObserver } from "mobx-react";
+
 type props = { list: Todo[]; markTodo: Function; deleteTodo: Function };
 
+@observer
 export default class TodoList extends React.Component<props> {
   constructor(props: any) {
     super(props);
@@ -12,11 +15,6 @@ export default class TodoList extends React.Component<props> {
 
   render() {
     if (this.props.list && this.props.list.length > 0) {
-      const deleteIconElement = (
-        <span className={"fa-icon"}>
-          <FontAwesomeIcon style={{ color: " #cb4335" }} icon={faTrash} />
-        </span>
-      );
       return (
         <List
           size="default"
@@ -25,6 +23,7 @@ export default class TodoList extends React.Component<props> {
           renderItem={(item) => (
             <List.Item>
               <Checkbox
+                className="todoListItem"
                 type="checkbox"
                 checked={item.IsCompleted}
                 onClick={(e) => this.props.markTodo(item.Id)}
@@ -33,11 +32,12 @@ export default class TodoList extends React.Component<props> {
               </Checkbox>
               {
                 <Button
+                  danger
+                  type="primary"
+                  shape="circle"
                   onClick={(e) => this.props.deleteTodo(item.Id)}
-                  icon={deleteIconElement}
-                >
-                  Delete
-                </Button>
+                  icon={<FontAwesomeIcon icon={faTrash} />}
+                ></Button>
               }
             </List.Item>
           )}

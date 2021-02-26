@@ -39,19 +39,30 @@ export default class NewTodo extends React.Component<props, state> {
     );
     return (
       <Row>
-        <Col span={6}>
-          <Input
-            value={this.state.todoText}
-            onChange={this.onKeyPress}
-            onKeyUp={this.onKeyUp}
-            placeholder={"Enter new todo..."}
-          />
-        </Col>
-        <Col span={1}></Col>
-        <Col span={3}>
-          <Button type="primary" onClick={this.onAddClick}>
-            {addIconElement}Add
-          </Button>
+        <Col span={12}>
+          <Input.Group size="large">
+            <Row gutter={8}>
+              <Col span={16}>
+                <Input
+                  size="large"
+                  value={this.state.todoText}
+                  onChange={this.onKeyPress}
+                  onKeyUp={this.onKeyUp}
+                  placeholder={"Enter new todo..."}
+                />
+              </Col>
+              <Col span={8}>
+                <Button
+                  size="large"
+                  type="primary"
+                  onClick={this.onAddClick}
+                  icon={addIconElement}
+                >
+                  Add
+                </Button>
+              </Col>
+            </Row>
+          </Input.Group>
         </Col>
       </Row>
     );

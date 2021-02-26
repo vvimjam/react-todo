@@ -1,6 +1,6 @@
 import Todo from "Models/Todo";
 
-export default class ReorderCompletedTodos {
+export default class ReorderTodos {
   static Execute(todos: Todo[], targetTodoId: number = -1) {
     if (!todos || todos.length == 0) return todos;
 
@@ -10,8 +10,8 @@ export default class ReorderCompletedTodos {
       targetTodoIndex == -1 ? undefined : todos.splice(targetTodoIndex, 1)[0];
 
     //Seperate out completed/incomplete tasks
-    var complete = todos.filter((y) => y.IsCompleted);
-    var inComplete = todos.filter((y) => !y.IsCompleted);
+    let complete = todos.filter((y) => y.IsCompleted);
+    let inComplete = todos.filter((y) => !y.IsCompleted);
 
     //Toggle completion
     if (targetTodo) {
