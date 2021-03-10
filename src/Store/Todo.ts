@@ -1,18 +1,12 @@
 import { makeAutoObservable } from "mobx";
+import ComplationFilters from "Models/CompletionFilters";
 import Todo from "Models/Todo";
 import ReorderTodos from "UseCases/ReorderTodos";
 
 export default class TodoStore {
   isSorted = false;
-  todos: Todo[] = [
-    new Todo(1, "Delete todos.", true),
-    new Todo(2, "Group actions [delete all, mark/unmark all]."),
-    new Todo(3, "Add todo 'Enter' key action.", true),
-    new Todo(4, "App logo/banner."),
-    new Todo(5, "Support for due date."),
-    new Todo(6, "Todo list filter by completed, incomplete"),
-    new Todo(7, "Mobx store.", true),
-  ];
+  filterType: Number = ComplationFilters.All;
+  todos: Todo[] = [];
 
   constructor() {
     makeAutoObservable(this);
@@ -42,6 +36,29 @@ export default class TodoStore {
   DeleteTodo = (id: number) => {
     this.todos = this.todos.filter((y) => y.Id != id);
   };
+
+  SetTodoFilter = (filter: Number) => {
+    this.filterType = filter;
+  };
+
+  SetTodos = (todos: Todo[]) => {
+    this.todos = todos;
+  };
+
+  get activeTodoFilter() {
+    return this.filterType;
+  }
+
+  get getAllTodosByFilter() {
+    switch (this.filterType) {
+      case ComplationFilters.Complete:
+        return this.todos.filter((y) => y.IsCompleted);
+      case ComplationFilters.InComplete:
+        return this.todos.filter((y) => !y.IsCompleted);
+      default:
+        return this.todos;
+    }
+  }
 
   get getAllTodos() {
     return this.todos;

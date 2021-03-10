@@ -1,12 +1,12 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import NewTodo from "./NewTodo";
 import TodoList from "./TodoList";
-import { Layout, Menu, Divider } from "antd";
-import { DesktopOutlined, PieChartOutlined } from "@ant-design/icons";
+import { Layout, Divider } from "antd";
 import { Row, Col } from "antd";
 import AddNewTodo from "UseCases/AddNewTodo";
 import { useObserver } from "mobx-react";
 import { RootStoreContext } from "Store/RootStore";
+import PersistState from "UseCases/PersistState";
 
 export const AppFunction = () => {
   const store = useContext(RootStoreContext);
@@ -30,23 +30,19 @@ export const AppFunction = () => {
     store.layoutStore.toggleCollapse();
   };
 
+  const saveUserData = () => PersistState.Execute(false);
+
+  useEffect(() => {
+    PersistState.Execute(); //load user data
+    window.addEventListener("beforeunload", saveUserData);
+
+    return () => {
+      window.removeEventListener("beforeunload", saveUserData);
+    };
+  }, []);
+
   return useObserver(() => (
     <Layout style={{ minHeight: "100vh" }}>
-      <Layout.Sider
-        collapsible
-        collapsed={store.layoutStore.isCollapsed}
-        onCollapse={onCollapseClick}
-      >
-        <div className="logo" />
-        <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline">
-          <Menu.Item key="1" icon={<PieChartOutlined />}>
-            All Tasks
-          </Menu.Item>
-          <Menu.Item key="2" icon={<DesktopOutlined />}>
-            Completed Tasks
-          </Menu.Item>
-        </Menu>
-      </Layout.Sider>
       <Layout className="site-layout">
         <Layout.Content style={{ margin: "0 16px" }}>
           <div
@@ -63,7 +59,7 @@ export const AppFunction = () => {
               <Col span={24}>
                 <TodoList
                   deleteTodo={deleteTodo}
-                  list={store.todoStore.getAllTodos}
+                  list={store.todoStore.getAllTodosByFilter}
                   markTodo={markUmMarkTodo}
                 />
               </Col>
